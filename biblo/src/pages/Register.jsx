@@ -17,7 +17,7 @@ function Register() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://3.90.128.188:8081/register', {
+            const response = await fetch('https://api.biblo.co.in/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)

@@ -16,7 +16,7 @@ function Home() {
         }
 
         // Fetch Books from MySQL
-        fetch('http://3.90.128.188:8081/books')
+        fetch('https://api.biblo.co.in/books')
             .then(res => res.json())
             .then(data => setBooks(data))
             .catch(err => console.log("Error fetching books:", err));
@@ -47,7 +47,7 @@ function Home() {
         if (!confirmSwap) return;
 
         try {
-            const response = await fetch('http://3.90.128.188:8081/swap', {
+            const response = await fetch('https://api.biblo.co.in/swap', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -74,7 +74,7 @@ function Home() {
         if (!window.confirm("Are you sure you want to delete this book?")) return;
 
         try {
-            await fetch(`http://3.90.128.188:8081/books/${bookId}`, {
+            await fetch(`https://api.biblo.co.in/books/${bookId}`, {
                 method: 'DELETE'
             });
             // Remove from screen immediately (Optimistic UI)

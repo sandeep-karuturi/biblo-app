@@ -13,7 +13,7 @@ function MySwaps() {
         }
 
         // Fetch requests for THIS user
-        fetch(`http://3.90.128.188:8081/swaps?user_id=${user.id}`)
+        fetch(`https://api.biblo.co.in/swaps?user_id=${user.id}`)
             .then(res => res.json())
             .then(data => setRequests(data))
             .catch(err => console.error(err));
@@ -21,7 +21,7 @@ function MySwaps() {
 
     const handleAction = async (id, status) => {
         try {
-            const response = await fetch('http://3.90.128.188:8081/swaps', {
+            const response = await fetch('https://api.biblo.co.in/swaps', {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id, status })
