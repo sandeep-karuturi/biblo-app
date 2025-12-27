@@ -11,7 +11,7 @@ function Login() {
 
         try {
             // Send request to your Node.js backend
-            const response = await fetch('http://localhost:8081/login', {
+            const response = await fetch('http://172.31.16.9:8081/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
