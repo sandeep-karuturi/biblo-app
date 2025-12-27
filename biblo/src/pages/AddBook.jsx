@@ -30,7 +30,7 @@ function AddBook() {
         const user = JSON.parse(localStorage.getItem("user"));
 
         try {
-            const response = await fetch('http://3.90.128.188:8081/books', {
+            const response = await fetch('https://api.biblo.co.in/books', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
