@@ -104,3 +104,52 @@ body {
 .swap-btn:hover {
   background-color: #1d4ed8;
 }
+
+/* --- Sticky Footer Layout --- */
+.app-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  /* Takes full screen height */
+}
+
+.app-content {
+  flex-grow: 1;
+  /* Pushes footer down */
+}
+
+/* --- Footer Design --- */
+.biblo-footer {
+  background-color: #1f2937;
+  /* Dark Gray */
+  color: white;
+  padding: 20px;
+  margin-top: 40px;
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.footer-links {
+  display: flex;
+  gap: 20px;
+  /* Adds space between links */
+}
+
+.footer-link {
+  color: #d1d5db;
+  /* Light gray */
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.footer-link:hover {
+  color: white;
+  text-decoration: underline;
+}

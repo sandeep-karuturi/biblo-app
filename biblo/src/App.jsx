@@ -7,42 +7,45 @@ import Register from './pages/Register';
 // Import Pages
 import Home from './pages/Home';
 import Login from './pages/Login';
-import AddBook from './pages/AddBook'; // <--- NEW IMPORT
+import AddBook from './pages/AddBook';
 import About from './pages/About';
 import Help from './pages/Help';
+// You likely need these if you created the files, otherwise comment them out:
 
 function App() {
   return (
     <BrowserRouter>
-      <div className="flex flex-col min-h-screen">
-        <div className="flex-grow">
+      {/* 1. Main Wrapper for Sticky Footer */}
+      <div className="app-wrapper">
+
+        <div className="app-content">
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
-            <Route path="add" element={<AddBook />} /> {/* <--- NEW ROUTE */}
+            <Route path="/add" element={<AddBook />} />
             <Route path="/swaps" element={<MySwaps />} />
             <Route path="/register" element={<Register />} />
             <Route path="/about" element={<About />} />
             <Route path="/help" element={<Help />} />
           </Routes>
         </div>
-        <footer className="bg-gray-800 text-white p-4 mt-8">
-          <div className="container mx-auto flex flex-col md:flex-row justify-between items-center">
-            <div className="mb-4 md:mb-0">
+
+        {/* 2. The Footer (Now using standard classes) */}
+        <footer className="biblo-footer">
+          <div className="footer-container">
+            <div>
               <p>&copy; {new Date().getFullYear()} Biblo. All rights reserved.</p>
             </div>
-            <div className="space-x-4">
-              <Link to="/about" className="hover:text-gray-300">About</Link>
-              <Link to="/help" className="hover:text-gray-300">Help</Link>
-
+            <div className="footer-links">
+              <Link to="/about" className="footer-link">About</Link>
+              <Link to="/help" className="footer-link">Help</Link>
             </div>
           </div>
         </footer>
+
       </div>
     </BrowserRouter>
   );
-
-
 }
 
 export default App;
