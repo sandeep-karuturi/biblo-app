@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 function Home() {
+    // 1. Initialize as empty array to prevent startup crashes
     const [books, setBooks] = useState([]);
     const [searchTerm, setSearchTerm] = useState("");
     const [currentUser, setCurrentUser] = useState(null);
     const navigate = useNavigate();
 
-    // 1. Check if user is logged in & Fetch Books
+    // 2. Fetch Data Safely
     useEffect(() => {
         // Auth Check
         const user = localStorage.getItem("user");
@@ -15,21 +16,33 @@ function Home() {
             setCurrentUser(JSON.parse(user));
         }
 
-        // Fetch Books from MySQL
+        // Fetch Books
         fetch('https://api.biblo.co.in/books')
             .then(res => res.json())
-            .then(data => setBooks(data))
+            .then(data => {
+                console.log("API Response:", data); // Check console to see structure!
+
+                // SAFETY CHECK: Ensure we strictly save an Array
+                if (Array.isArray(data)) {
+                    setBooks(data);
+                } else if (data.data && Array.isArray(data.data)) {
+                    setBooks(data.data);
+                } else if (data.books && Array.isArray(data.books)) {
+                    setBooks(data.books);
+                } else {
+                    console.error("API returned something weird (not an array):", data);
+                    setBooks([]); // Fallback to empty list so app doesn't crash
+                }
+            })
             .catch(err => console.log("Error fetching books:", err));
     }, []);
 
-    // 2. Handle Logout
     const handleLogout = () => {
         localStorage.removeItem("user");
         setCurrentUser(null);
         window.location.reload();
     };
 
-    // 3. Handle Real Swap Request
     const handleSwapRequest = async (book) => {
         if (!currentUser) {
             alert("You must login to swap books!");
@@ -37,7 +50,6 @@ function Home() {
             return;
         }
 
-        // Prevent swapping with yourself
         if (currentUser.id === book.owner_id) {
             alert("You cannot swap your own book!");
             return;
@@ -69,7 +81,6 @@ function Home() {
         }
     };
 
-    // 4. Handle Delete Book
     const handleDelete = async (bookId) => {
         if (!window.confirm("Are you sure you want to delete this book?")) return;
 
@@ -77,8 +88,8 @@ function Home() {
             await fetch(`https://api.biblo.co.in/books/${bookId}`, {
                 method: 'DELETE'
             });
-            // Remove from screen immediately (Optimistic UI)
-            setBooks(books.filter(book => book.id !== bookId));
+            // Optimistic UI Update using proper filtering
+            setBooks(prevBooks => prevBooks.filter(book => book.id !== bookId));
         } catch (err) {
             console.error(err);
             alert("Failed to delete");
@@ -93,7 +104,6 @@ function Home() {
                 <div>
                     {currentUser ? (
                         <>
-                            {/* UPDATED: Only show first name */}
                             <span style={{ marginRight: '15px', fontWeight: 'bold', color: '#333' }}>
                                 Hi, {currentUser.username.split(' ')[0]}
                             </span>
@@ -133,15 +143,15 @@ function Home() {
 
             {/* --- BOOK GRID --- */}
             <div className="book-grid">
-                {/* Empty State Check */}
-                {books.length === 0 && (
+                {/* 3. SAFETY CHECK: Ensure books exists before checking length */}
+                {(!books || books.length === 0) && (
                     <p style={{ textAlign: 'center', gridColumn: '1/-1', color: '#666' }}>
                         No books found. Be the first to list one!
                     </p>
                 )}
 
-                {/* Filter & Map Logic */}
-                {books.filter((val) => {
+                {/* 4. MAIN FIX: Added '?' optional chaining */}
+                {books?.filter((val) => {
                     if (searchTerm === "") return val;
                     if (val.title.toLowerCase().includes(searchTerm.toLowerCase())) return val;
                     if (val.author.toLowerCase().includes(searchTerm.toLowerCase())) return val;
@@ -149,7 +159,6 @@ function Home() {
                     return null;
                 }).map((book) => (
                     <div key={book.id} className="book-card">
-                        {/* Image Logic */}
                         <div style={{ height: '200px', background: '#f3f4f6', borderRadius: '8px', marginBottom: '15px', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             {book.cover_pic ? (
                                 <img src={book.cover_pic} alt={book.title} style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
@@ -161,16 +170,13 @@ function Home() {
                         <h3>{book.title}</h3>
                         <p className="author">by {book.author}</p>
 
-                        {/* Dynamic Owner Name */}
                         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', color: '#666', marginBottom: '15px' }}>
                             <span>📍 {book.location}</span>
                             <span>👤 {book.owner_name || "Unknown"}</span>
                         </div>
 
-                        {/* --- BUTTONS AREA --- */}
                         <div style={{ display: 'flex', gap: '10px' }}>
                             {currentUser && currentUser.id === book.owner_id ? (
-                                /* 1. DELETE BUTTON (If you are the owner) */
                                 <button
                                     onClick={() => handleDelete(book.id)}
                                     className="swap-btn"
@@ -179,7 +185,6 @@ function Home() {
                                     Delete Book
                                 </button>
                             ) : (
-                                /* 2. SWAP BUTTON (If someone else owns it) */
                                 <button
                                     className="swap-btn"
                                     onClick={() => handleSwapRequest(book)}
